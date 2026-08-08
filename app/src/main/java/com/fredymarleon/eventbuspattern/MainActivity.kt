@@ -10,6 +10,7 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.fredymarleon.eventbuspattern.databinding.ActivityMainBinding
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
@@ -85,6 +86,17 @@ class MainActivity : AppCompatActivity(), OnClickListener {
                     is SportEvent.ResultSuccess ->
                         adapter.add(event)
 
+                    is SportEvent.ResultError -> Snackbar.make(
+                        binding.root, "Code: ${event.errorCode}, Message: ${event.errorMessage}",
+                        Snackbar.LENGTH_LONG
+                    ).show()
+
+                    is SportEvent.SaveEvent -> Toast.makeText(
+                        this@MainActivity,
+                        "Guardado",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
                     is SportEvent.AdEvent -> Toast.makeText(
                         this@MainActivity,
                         "Ad click. Send data to server...",
@@ -92,7 +104,6 @@ class MainActivity : AppCompatActivity(), OnClickListener {
                     ).show()
 
                     is SportEvent.CloseAdEvent -> binding.btnAd.isVisible = false
-                    else -> {}
                 }
             }
         }
@@ -117,5 +128,10 @@ class MainActivity : AppCompatActivity(), OnClickListener {
     /*
     * OnClickListener
     */
-    override fun onClick(result: SportEvent.ResultSuccess) {}
+    override fun onClick(result: SportEvent.ResultSuccess) {
+        binding.srlResults.isRefreshing = true
+        lifecycleScope.launch {
+            EventBus.instance().publishEvent(SportEvent.SaveEvent)
+        }
+    }
 }
