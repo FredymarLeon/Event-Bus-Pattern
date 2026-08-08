@@ -1,10 +1,12 @@
 package com.fredymarleon.eventbuspattern
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.fredymarleon.eventbuspattern.databinding.ActivityMainBinding
@@ -29,6 +31,8 @@ class MainActivity : AppCompatActivity(), OnClickListener {
 
         setupAdapter()
         setupRecyclerView()
+        setupSwipeRefresh()
+        setupClicks()
         setupSubscribers()
     }
 
@@ -45,6 +49,34 @@ class MainActivity : AppCompatActivity(), OnClickListener {
         }
     }
 
+    private fun setupSwipeRefresh() {
+        binding.srlResults.setOnRefreshListener {
+            adapter.clear()
+            getEvents()
+            binding.btnAd.isVisible = true
+        }
+    }
+
+    private fun setupClicks() {
+        binding.btnAd.run {
+            setOnClickListener {
+                lifecycleScope.launch {
+                    binding.srlResults.isRefreshing = true
+                    val events = getAdEventsInRealtime()
+                    EventBus.instance().publishEvent(events.first())
+                }
+            }
+            setOnLongClickListener { view ->
+                lifecycleScope.launch {
+                    binding.srlResults.isRefreshing = true
+                    EventBus.instance().publishEvent(SportEvent.CloseAdEvent)
+                    view.isVisible = false
+                }
+                true
+            }
+        }
+    }
+
     private fun setupSubscribers() {
         lifecycleScope.launch {
             EventBus.instance().subscribeToEvents<SportEvent> { event ->
@@ -53,6 +85,13 @@ class MainActivity : AppCompatActivity(), OnClickListener {
                     is SportEvent.ResultSuccess ->
                         adapter.add(event)
 
+                    is SportEvent.AdEvent -> Toast.makeText(
+                        this@MainActivity,
+                        "Ad click. Send data to server...",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                    is SportEvent.CloseAdEvent -> binding.btnAd.isVisible = false
                     else -> {}
                 }
             }

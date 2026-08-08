@@ -5,6 +5,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.fredymarleon.eventbuspattern.databinding.ItemEventBinding
 
@@ -34,7 +35,7 @@ class ResultAdapter(private val listener: OnClickListener) :
                 )
             }
             imgSport.setImageResource(result.getImageRes())
-            tvWarning.visibility = if (result.isWarning) View.VISIBLE else View.GONE
+            tvWarning.isVisible = result.isWarning
         }
     }
 
