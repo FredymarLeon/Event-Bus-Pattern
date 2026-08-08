@@ -1,4 +1,4 @@
-package com.fredymarleon.eventbuspattern
+package com.fredymarleon.eventbuspattern.adapters
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -7,7 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import com.fredymarleon.eventbuspattern.R
 import com.fredymarleon.eventbuspattern.databinding.ItemEventBinding
+import com.fredymarleon.eventbuspattern.eventsBus.SportEvent
 
 class ResultAdapter(private val listener: OnClickListener) :
     RecyclerView.Adapter<ResultAdapter.ViewHolder>() {

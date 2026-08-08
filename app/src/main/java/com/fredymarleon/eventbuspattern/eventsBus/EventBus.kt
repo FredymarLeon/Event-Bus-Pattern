@@ -1,4 +1,4 @@
-package com.fredymarleon.eventbuspattern
+package com.fredymarleon.eventbuspattern.eventsBus
 
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableSharedFlow

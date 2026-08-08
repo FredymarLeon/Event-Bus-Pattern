@@ -1,5 +1,6 @@
-package com.fredymarleon.eventbuspattern
+package com.fredymarleon.eventbuspattern.dataAcces
 
+import com.fredymarleon.eventbuspattern.eventsBus.SportEvent
 import kotlin.random.Random
 
 fun getResultEventsInRealtime() = listOf(

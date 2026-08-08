@@ -9,7 +9,15 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.fredymarleon.eventbuspattern.adapters.OnClickListener
+import com.fredymarleon.eventbuspattern.adapters.ResultAdapter
+import com.fredymarleon.eventbuspattern.dataAcces.getAdEventsInRealtime
+import com.fredymarleon.eventbuspattern.dataAcces.getResultEventsInRealtime
+import com.fredymarleon.eventbuspattern.dataAcces.someTime
 import com.fredymarleon.eventbuspattern.databinding.ActivityMainBinding
+import com.fredymarleon.eventbuspattern.eventsBus.EventBus
+import com.fredymarleon.eventbuspattern.eventsBus.SportEvent
+import com.fredymarleon.eventbuspattern.services.SportService
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -80,6 +88,7 @@ class MainActivity : AppCompatActivity(), OnClickListener {
 
     private fun setupSubscribers() {
         lifecycleScope.launch {
+            SportService.instance().setupSubscribers(this)
             EventBus.instance().subscribeToEvents<SportEvent> { event ->
                 binding.srlResults.isRefreshing = false
                 when (event) {
@@ -131,7 +140,8 @@ class MainActivity : AppCompatActivity(), OnClickListener {
     override fun onClick(result: SportEvent.ResultSuccess) {
         binding.srlResults.isRefreshing = true
         lifecycleScope.launch {
-            EventBus.instance().publishEvent(SportEvent.SaveEvent)
+           // EventBus.instance().publishEvent(SportEvent.SaveEvent)
+            SportService.instance().saveResult(result)
         }
     }
 }

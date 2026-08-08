@@ -1,4 +1,6 @@
-package com.fredymarleon.eventbuspattern
+package com.fredymarleon.eventbuspattern.eventsBus
+
+import com.fredymarleon.eventbuspattern.R
 
 sealed class SportEvent {
     data class ResultSuccess(
