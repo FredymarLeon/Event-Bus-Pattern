@@ -5,8 +5,12 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.fredymarleon.eventbuspattern.databinding.ActivityMainBinding
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 class MainActivity : AppCompatActivity(), OnClickListener {
     private lateinit var binding: ActivityMainBinding
@@ -25,12 +29,7 @@ class MainActivity : AppCompatActivity(), OnClickListener {
 
         setupAdapter()
         setupRecyclerView()
-
-        getResultEventsInRealtime().forEach {
-            if (it is SportEvent.ResultSuccess) {
-                adapter.add(it)
-            }
-        }
+        setupSubscribers()
     }
 
     private fun setupAdapter() {
@@ -44,6 +43,36 @@ class MainActivity : AppCompatActivity(), OnClickListener {
             layoutManager = LinearLayoutManager(this@MainActivity)
             adapter = this@MainActivity.adapter
         }
+    }
+
+    private fun setupSubscribers() {
+        lifecycleScope.launch {
+            EventBus.instance().subscribeToEvents<SportEvent> { event ->
+                binding.srlResults.isRefreshing = false
+                when (event) {
+                    is SportEvent.ResultSuccess ->
+                        adapter.add(event)
+
+                    else -> {}
+                }
+            }
+        }
+    }
+
+    private fun getEvents() {
+        lifecycleScope.launch {
+            val events = getResultEventsInRealtime()
+            events.forEach { event ->
+                delay(someTime().milliseconds)
+                EventBus.instance().publishEvent(event)
+            }
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        binding.srlResults.isRefreshing = true
+        getEvents()
     }
 
     /*

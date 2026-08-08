@@ -1,5 +1,7 @@
 package com.fredymarleon.eventbuspattern
 
+import kotlin.random.Random
+
 fun getResultEventsInRealtime() = listOf(
     SportEvent.ResultSuccess(1, "Fútbol", listOf("Italia", "Perú", "Corea del Sur")),
     SportEvent.ResultSuccess(2, "Levantamiento de Pesas", listOf("Mongolia", "Alemania", "Turquía")),
@@ -16,3 +18,5 @@ fun getAdEventsInRealtime() = listOf(
     SportEvent.AdEvent,
     SportEvent.AdEvent
 )
+
+fun someTime(): Long = Random.nextLong(500, 2_000)
