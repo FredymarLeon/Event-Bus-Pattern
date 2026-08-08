@@ -4,7 +4,7 @@ sealed class SportEvent {
     data class ResultSuccess(
         val sportKey: Int,
         val sportName: String,
-        val result: List<String>?,
+        val results: List<String>?,
         val isWarning: Boolean = false
     ) : SportEvent() {
         fun getImageRes(): Int = when (sportKey) {
